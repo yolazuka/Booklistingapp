@@ -16,8 +16,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.usuario.booklistingapp.R.id.progressBar;
-
 public class MainActivity extends AppCompatActivity {
 
     public EditText searchField;
@@ -30,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     //TextView that is displayed when the list of books is empty//
 
-    private TextView mEmptyStateTextView;
+    private TextView emptyStateTextView;
 
     //Adapter for the list of books//
 
@@ -38,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     //declare the variable for the progress bar //
 
-    private ProgressBar mProgressBar;
+    private ProgressBar progressBar;
 
     //declare the final string for the userSearch
 
@@ -67,8 +65,14 @@ public class MainActivity extends AppCompatActivity {
         //Set the created ListView with the SetAdapter
         bookList.setAdapter(adapter);
 
+        //Find the view for the empty View in xml
+        emptyStateTextView = (TextView) findViewById(R.id.empty_view);
+
         // Find the View that shows the EditText
         searchField = (EditText) findViewById(R.id.field_for_the_search);
+
+        //Find the View for the progress bar xml
+        progressBar = (ProgressBar) findViewById(R.id.progress_Bar);
 
         // Find the View that shows the searching button
         search = (Button) findViewById(R.id.search_button);
@@ -96,12 +100,12 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
 
-            //otherwise display an error. First hide loading indicator so error message will be visible
-            View loadingIndicator = findViewById(progressBar);
-            loadingIndicator.setVisibility(View.GONE);
+            //if there is not network hide the progress bar and..
+            adapter.clear();
+            progressBar.setVisibility(View.GONE);
 
             //Update empty state with no connection error message
-            mEmptyStateTextView.setText(R.string.no_internet_connection);
+            emptyStateTextView.setText(R.string.no_internet_connection);
         }
 
     }
@@ -122,9 +126,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(List<Book> data) {
-            mProgressBar.setVisibility(View.GONE);
-            mEmptyStateTextView.setText(R.string.no_books_found);
-            // Deletes the adapter from previous books
+            progressBar.setVisibility(View.GONE);
+            emptyStateTextView.setText(R.string.no_books_found);
+            // Deletes the adapter from previous book items
             adapter.clear();
             if (data != null && !data.isEmpty()) {
                 adapter.addAll(data);

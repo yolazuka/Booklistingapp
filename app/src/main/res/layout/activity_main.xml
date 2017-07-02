@@ -48,7 +48,7 @@
 
     <!-- Progress bar only seen if the request takes a while to process the query -->
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_Bar"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
