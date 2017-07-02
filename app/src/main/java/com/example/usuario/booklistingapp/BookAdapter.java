@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-
 /**
  * Created by Usuario on 30/6/17.
  */

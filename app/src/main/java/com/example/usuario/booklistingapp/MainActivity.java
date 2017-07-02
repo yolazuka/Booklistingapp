@@ -1,34 +1,31 @@
 package com.example.usuario.booklistingapp;
 
-import android.app.LoaderManager;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
-import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<Book>> {
+import static com.example.usuario.booklistingapp.R.id.empty_view;
+import static com.example.usuario.booklistingapp.R.id.progressBar;
 
-    //We specify an ID for our loader //
+public class MainActivity extends AppCompatActivity {
 
-    public static final int BOOK_LOADER_ID = 1;
+    public EditText searchField;
 
-    //Private Variableto keep the user query when rotate the device
-
+    //variable for the search of the EditText
     private String mQuery;
 
     //URL for the book data from the googleAPI//
-
-    private static final String MAIN_REQUEST_URL = "https://www.googleapis.com/books/v1/volumes?q=intitle";
+    private int MAIN_REQUEST_URL = R.string.google_book_api;
 
     //TextView that is displayed when the list of books is empty//
 
@@ -42,6 +39,11 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     private ProgressBar mProgressBar;
 
+    //declare the final string for the userSearch
+
+    private String finalUserRequest;
+
+    private Button search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,106 +57,68 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         //To get the details on the current active default data network
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
+        // Find the View that shows the EditText
+        searchField = (EditText) findViewById(R.id.field_for_the_search);
+
+        // Find the View that shows the searching button
+        search = (Button) findViewById(R.id.search_button);
+
+        // Set a click listener on that View
+        search.setOnClickListener(new View.OnClickListener() {
+
+            // when the user cliks the button send the searchword into a variable to include it into the request URL and
+            //through the Builder we compose the whole url request ( api http + the user query = finalUserRequest )
+
+            @Override
+            public void onClick(View view) {
+                StringBuilder builder = new StringBuilder();
+                String userSearch = searchField.getText().toString();
+                String bookApi = getString(MAIN_REQUEST_URL);
+                builder.append(bookApi).append(userSearch);
+                finalUserRequest = builder.toString();
+            }
+        });
+
         //If there is a network connection, fetch data
         if (networkInfo != null && networkInfo.isConnected()) {
-            //Get a link to the LoaderManager, in order to interact with loaders
-            LoaderManager loaderManager = getLoaderManager();
-
-            //in this moment the loader is initializing. it links to the int ID
-            loaderManager.initLoader(BOOK_LOADER_ID, null, this);
+            BookAsyncTask asyncTask = new BookAsyncTask();
+            asyncTask.execute(finalUserRequest);
 
         } else {
 
             //otherwise display an error. First hide loading indicator so error message will be visible
-            View loadingIndicator = findViewById(R.id.progressBar);
+            View loadingIndicator = findViewById(progressBar);
             loadingIndicator.setVisibility(View.GONE);
 
             //Update empty state with no connection error message
             mEmptyStateTextView.setText(R.string.no_internet_connection);
         }
 
-        // Find a reference to the {@link ListView} in the layout
-        ListView bookListView = (ListView) findViewById(R.id.list);
-
-        //set an empty view if there is not data from the url on the app
-
-        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
-        bookListView.setEmptyView(mEmptyStateTextView);
-
-        //Create a new adapter that takes a list of books as an input//
-        mAdapter = new BookAdapter(this, new ArrayList<Book>());
-
-        //link the adapter to the ListView, so in this way the list can be populate in the
-        //user interface
-        bookListView.setAdapter(mAdapter);
-
-        //Declare a LoaderManager, in order to interact with loaders
-
-        LoaderManager loaderManager = getLoaderManager();
-
-        //Initialize the loader.
-
-        loaderManager.initLoader(BOOK_LOADER_ID, null, this);
-
     }
 
-    @Override
+    //THE FOLLOWING BLOCK OF CODE IS TO CREATE AN INNER CLASS FOR THE ASYNCTASK
 
-    public Loader<List<Book>> onCreateLoader(int i, Bundle bundle) {
+    private class BookAsyncTask extends AsyncTask<String, Void, List<Book>> {
 
-        // Create a new loader for the given URL
+        @Override
+        protected List<Book> doInBackground(String... params) {
+            //IF the url is not valid, dont execute any task
+            if (params.length < 1 || params[0] == null) {
+                return null;
+            }
+            List<Book> books = QueryUtils.fetchBookData(params[0]);
 
-        return new BookLoader(this, MAIN_REQUEST_URL);
-
-    }
-
-    // After the background task is done, bring it back to the main thread
-
-    @Override
-    public void onLoadFinished(Loader<List<Book>> loader, List<Book> books) {
-
-        //We set invisible the progress bar
-
-        mProgressBar.setVisibility(View.GONE);
-
-        /// Then We Set empty state text to display "No books found."
-        mEmptyStateTextView.setText(R.string.no_books_found);
-
-        //And Clear the adapter of previous book search data
-        mAdapter.clear();
-
-        // If there is a valid list of books, then add them to the adapter's
-        // data set. This will trigger the ListView to update.
-        if (books != null && !books.isEmpty()) {
-            mAdapter.addAll(books);
+            return books;
         }
 
-    }
-
-    @Override
-
-    public void onLoaderReset(Loader<List<Book>> loader) {
-        mAdapter.clear();
-
-    }
-
-    //THE FOLLOWING BLOCK OF CODE IS TO KEEP THE DATA WHEN ROTATE THE DEVICE
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-
-        //Save the query given by the user
-        mQuery = search.getQuery().toString();
-        outState.putString("query", mQuery);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-
-        //Restore the saved data, to initialize it later through the loader
-        mQuery = savedInstanceState.getString("query");
-        //Initialize the Loader (execute the search)
-        super.onRestoreInstanceState(savedInstanceState);
+        protected void onPostExecute(List<Book> data) {
+            progressBar.setVisibility(View.GONE);
+            empty_view.setText(R.string.no_books_found);
+            // Deletes the adapter from previous books
+            adapter.clear();
+            if (data != null && !data.isEmpty()) {
+                adapter.addAll(data);
+            }
+        }
     }
 }

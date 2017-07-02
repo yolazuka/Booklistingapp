@@ -17,7 +17,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.String;
 
 
 /**
@@ -43,14 +42,13 @@ public class QueryUtils {
             //try to send an http request with the created url
             jsonResponse = makeHttpRequest(url);
 
-
         } catch (IOException e) {
             //if there is an exception show it in the log
             Log.e(LOG_TAG, "Error at the http Request", e);
         }
 
         //Get the requested info from the query and create the suitable list of data
-        ArrayList<Book> books = extractFeatureFromJson(jsonResponse);
+        List<Book> books = extractBookInfo(jsonResponse);
 
         return books;
     }
@@ -65,8 +63,8 @@ public class QueryUtils {
         URL url = null;
 
         try {
-            //here we include the url + the user search term in order to create a NEW complete URL
-            url = new URL("https://www.googleapis.com/books/v1/volumes?q=intitle:" + query + "&maxResults=8");
+
+            url = new URL(query);
 
         } catch (MalformedURLException e) {
 
@@ -172,7 +170,7 @@ public class QueryUtils {
 
         //Return the response in String
         return builder.toString();
-
+    }
         /*
          * IN THIS FOLLOWING BLOCK OF CODE WE ARE GOING TO EXTRACT THE DATA FROM THE JSON RESPONSE
           * AND CREATE A LIST OF BOOKS FROM IT.
@@ -180,10 +178,12 @@ public class QueryUtils {
          * @return the List of the Book OBJECTS created from the JSON response
          */
 
-        private static List<Book> extractFromJson(String responseJson) {
+    private static List<Book> extractBookInfo(String objectBookJSON) {
+
+        String responseJson;
 
             //If the response is empty, return early
-            if (TextUtils.isEmpty(responseJson)) {
+        if (TextUtils.isEmpty(objectBookJSON)) {
                 return null;
             }
 
@@ -192,35 +192,33 @@ public class QueryUtils {
 
             try {
 
-                //Try to get the main JSONObject (the whole compilation of the queried books) from the response and get the items (the books one by one)
-                JSONObject compilations = new JSONObject(responseJson);
-                JSONArray items = compilations.getJSONArray("items");
+                //We create the object of the book and the Array that contain these objects
+                JSONObject objectBook = new JSONObject(objectBookJSON);
+                JSONArray itemsArray = objectBook.getJSONArray("items");
 
-                //Loop through all the books, get the title, and author of all the books in the JSON response
-                for (int i = 0; i < items.length(); i++) {
-                    JSONObject item = items.getJSONObject(i);
-                    JSONObject compilation = compilations.getJSONObject("compilationInfo");
-                    String title = compilation.getString("title");
-                    String author;
-                    if (compilation.has("authors")) {
-                        author = compilation.getJSONArray("authors").get(0).toString();
-                    }
-                    else {
-                        author = "Unknown author";
+                //Loop through all the books, get the title, author and info link of all the books in the JSON response
+                for (int i = 0; i < itemsArray.length(); i++) {
+
+                    JSONObject item = itemsArray.getJSONObject(i);
+                    JSONObject bookAttributes = item.getJSONObject("volumeInfo");
+                    String title = bookAttributes.getString("title");
+                    JSONArray author = bookAttributes.getJSONArray("authors");
+                    String authors = "";
+                    for (int x = 0; x < author.length(); x++) {
+                        authors = authors.concat(author.getString(x) + "\n");
                     }
 
-                    //Create a new Book Object with all the  data parameters
-                    Book book = new Book(author, title);
+                    //Create a new Book Object with the data of a given book
+                    Book currentbook = new Book(authors, title);
 
                     //Add the book to the List of Book Objects
-                    books.add(book);
+                    books.add(currentbook);
                 }
-
 
             } catch (JSONException e) {
 
-                //If it finds a JSONException, show it into the logs
-                Log.e(LOG_TAG, "JSON response exception", e);
+                //If it fails, log it
+                Log.e(LOG_TAG, "Error extracting the data from the JSON response", e);
             }
 
             return books;
@@ -228,5 +226,3 @@ public class QueryUtils {
         }
     }
 
-
-}
