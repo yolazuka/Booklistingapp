@@ -24,7 +24,6 @@ public class BookAdapter extends ArrayAdapter<Book> {
      * @param books is the list of books to be displayed
      */
 
-
     public BookAdapter(Context context, List<Book> books) {
 
         super(context, 0, books);

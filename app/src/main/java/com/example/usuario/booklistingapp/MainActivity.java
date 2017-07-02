@@ -9,12 +9,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.usuario.booklistingapp.R.id.empty_view;
 import static com.example.usuario.booklistingapp.R.id.progressBar;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Adapter for the list of books//
 
-    private BookAdapter mAdapter;
+    private BookAdapter adapter;
 
     //declare the variable for the progress bar //
 
@@ -56,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
 
         //To get the details on the current active default data network
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+
+        //Find the ListView id in the listview xml
+        final ListView bookList = (ListView) findViewById(R.id.list);
+
+        //creates a new adapter from the previously created BookAdapter
+        adapter = new BookAdapter(this, new ArrayList<Book>());
+
+        //Set the created ListView with the SetAdapter
+        bookList.setAdapter(adapter);
 
         // Find the View that shows the EditText
         searchField = (EditText) findViewById(R.id.field_for_the_search);
@@ -112,8 +122,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(List<Book> data) {
-            progressBar.setVisibility(View.GONE);
-            empty_view.setText(R.string.no_books_found);
+            mProgressBar.setVisibility(View.GONE);
+            mEmptyStateTextView.setText(R.string.no_books_found);
             // Deletes the adapter from previous books
             adapter.clear();
             if (data != null && !data.isEmpty()) {
