@@ -5,7 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -41,6 +44,10 @@ public class BookAdapter extends ArrayAdapter<Book> {
 
         // Get the current object located at this position in the list
         Book currentBook = getItem(position);
+
+        // Get the ImageView Id for the thumnail image
+        ImageView imageForCover = (ImageView) bookListView.findViewById(R.id.book_cover);
+        Picasso.with(getContext()).load(currentBook.getCover()).into(imageForCover);
 
         //Get the TextView with the title_view ID and set the title of the current book as text
         TextView titleTextView = (TextView) bookListView.findViewById(R.id.title_text_view);

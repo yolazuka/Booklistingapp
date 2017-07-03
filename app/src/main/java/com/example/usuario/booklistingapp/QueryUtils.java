@@ -1,5 +1,6 @@
 package com.example.usuario.booklistingapp;
 
+import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -201,6 +202,9 @@ public class QueryUtils {
 
                     JSONObject item = itemsArray.getJSONObject(i);
                     JSONObject bookAttributes = item.getJSONObject("volumeInfo");
+                    JSONObject imageForCover = bookAttributes.getJSONObject("imageLinks");
+                    String urilinkBook = imageForCover.getString("thumbnail");
+                    Uri imgUri = Uri.parse(urilinkBook);
                     String title = bookAttributes.getString("title");
                     JSONArray author = bookAttributes.getJSONArray("authors");
                     String authors = "";
@@ -209,7 +213,7 @@ public class QueryUtils {
                     }
 
                     //Create a new Book Object with the data of a given book
-                    Book currentbook = new Book(authors, title);
+                    Book currentbook = new Book(title, authors, imgUri);
 
                     //Add the book to the List of Book Objects
                     books.add(currentbook);
