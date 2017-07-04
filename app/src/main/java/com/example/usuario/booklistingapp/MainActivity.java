@@ -64,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
         //Find the view for the empty View in xml
         emptyStateTextView = (TextView) findViewById(R.id.empty_view);
 
+        //set and link the ListView (bookList ) with the TextView( emptyStateTextView )
+        bookList.setEmptyView(emptyStateTextView);
+
         // Find the View that shows the EditText
         searchField = (EditText) findViewById(R.id.field_for_the_search);
 
@@ -88,6 +91,11 @@ public class MainActivity extends AppCompatActivity {
                 finalUserRequest = builder.toString();
                 Log.e(userSearch, "this is the user search word");
                 Log.e(finalUserRequest, " this is the final url");
+                progressBar.setVisibility(View.VISIBLE);
+
+                if (progressBar.getVisibility() == View.VISIBLE) {
+                    emptyStateTextView.setVisibility(View.GONE);
+                }
 
                 //Set the connectivity manager, which checks the state of network connectivity
                 ConnectivityManager connMgr = (ConnectivityManager)

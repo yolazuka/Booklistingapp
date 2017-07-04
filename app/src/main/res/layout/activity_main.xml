@@ -23,24 +23,24 @@
 
         <!-- field for the search-->
 
-    <EditText
-        android:id="@+id/field_for_the_search"
-        android:layout_width="175dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_marginLeft="10dp"
-        android:backgroundTint="@color/green"
-        android:hint="@string/book_searching" />
+        <EditText
+            android:id="@+id/field_for_the_search"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginLeft="10dp"
+            android:backgroundTint="@color/green"
+            android:hint="@string/book_searching" />
 
-    <!-- button for the search-->
+        <!-- button for the search-->
 
-    <Button
-        android:id="@+id/search_button"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
-        android:layout_gravity="bottom"
-        android:background="@drawable/ic_search_black_24dp"
-        android:paddingRight="10dp" />
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/ic_search_black_24dp"
+            android:paddingRight="10dp" />
 
     </LinearLayout>
 
@@ -66,16 +66,20 @@
         android:id="@+id/empty_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
         android:textAppearance="?android:textAppearanceMedium"
-        android:textColor="@color/green" />
+        android:textColor="@color/green"
+        android:textSize="20sp" />
 
     <!-- Progress bar only seen if the request takes a while to process the query -->
     <ProgressBar
         android:id="@+id/progress_Bar"
-        style="@android:style/Widget.ProgressBar.Horizontal"
+        style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:progress="25"/>
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:visibility="invisible" />
 
 </LinearLayout>
