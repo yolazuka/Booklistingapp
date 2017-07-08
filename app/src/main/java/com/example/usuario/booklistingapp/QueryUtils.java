@@ -206,11 +206,14 @@ public class QueryUtils {
                     String urilinkBook = imageForCover.getString("thumbnail");
                     Uri imgUri = Uri.parse(urilinkBook);
                     String title = bookAttributes.getString("title");
-                    JSONArray author = bookAttributes.getJSONArray("authors");
+
                     String authors = "";
 
                     //If there is author info make this:
                     if (bookAttributes.has("authors")) {
+
+                        JSONArray author = bookAttributes.getJSONArray("authors");
+                        Log.v(LOG_TAG, "The key authors got author info");
 
                         for (int x = 0; x < author.length(); x++) {
                             authors = authors.concat(author.getString(x) + "\n");
@@ -225,6 +228,7 @@ public class QueryUtils {
 
                     if (bookAttributes.has("title")) {
                         title = bookAttributes.getString("title");
+                        Log.v(LOG_TAG, "The key title got title info");
 
                         //if there is not, show this message
 
@@ -236,6 +240,7 @@ public class QueryUtils {
 
                     if (bookAttributes.has("imageLinks")) {
                         imgUri = Uri.parse(urilinkBook);
+                        Log.v(LOG_TAG, "The imagelinks key got info");
 
                         //if there is not image,show this message
 
