@@ -24,7 +24,7 @@ public class BookAdapter extends ArrayAdapter<Book> {
      * Create a new {@link BookAdapter} object.
      *
      * @param context is the current context (i.e. Activity) that the adapter is being created in.
-     * @param books is the list of books to be displayed
+     * @param books   is the list of books to be displayed
      */
 
     public BookAdapter(Context context, List<Book> books) {

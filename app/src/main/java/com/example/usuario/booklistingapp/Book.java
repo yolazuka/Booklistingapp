@@ -20,11 +20,11 @@ public class Book {
         mCover = cover;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return mTitle;
     }
 
-    public String getAuthor(){
+    public String getAuthor() {
         return mAuthor;
     }
 

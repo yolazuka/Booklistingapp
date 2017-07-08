@@ -183,10 +183,10 @@ public class QueryUtils {
 
         String responseJson;
 
-            //If the response is empty, return early
+        //If the response is empty, return early
         if (TextUtils.isEmpty(objectBookJSON)) {
-                return null;
-            }
+            return null;
+        } else {
 
             //Create a List for the Book Objects
             List<Book> books = new ArrayList<Book>();
@@ -208,8 +208,39 @@ public class QueryUtils {
                     String title = bookAttributes.getString("title");
                     JSONArray author = bookAttributes.getJSONArray("authors");
                     String authors = "";
-                    for (int x = 0; x < author.length(); x++) {
-                        authors = authors.concat(author.getString(x) + "\n");
+
+                    //If there is author info make this:
+                    if (bookAttributes.has("authors")) {
+
+                        for (int x = 0; x < author.length(); x++) {
+                            authors = authors.concat(author.getString(x) + "\n");
+                        }
+                        //if there is not, show this message
+                    } else {
+                        authors = "Unknown author";
+
+                    }
+
+                    //if there is title info, get the string from title
+
+                    if (bookAttributes.has("title")) {
+                        title = bookAttributes.getString("title");
+
+                        //if there is not, show this message
+
+                    } else {
+                        title = "Unknown title";
+                    }
+
+                    //if there is image, parse the image thumbnail
+
+                    if (bookAttributes.has("imageLinks")) {
+                        imgUri = Uri.parse(urilinkBook);
+
+                        //if there is not image,show this message
+
+                    } else {
+                        urilinkBook = "Image N/A";
                     }
 
                     //Create a new Book Object with the data of a given book
@@ -228,5 +259,7 @@ public class QueryUtils {
             return books;
 
         }
+
     }
+}
 

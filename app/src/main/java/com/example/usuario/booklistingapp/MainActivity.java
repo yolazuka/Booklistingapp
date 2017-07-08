@@ -104,21 +104,21 @@ public class MainActivity extends AppCompatActivity {
                 //To get the details on the current active default data network
                 NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 
-        //If there is a network connection, fetch data
-        if (networkInfo != null && networkInfo.isConnected()) {
-            BookAsyncTask asyncTask = new BookAsyncTask();
-            Log.v(LOG_TAG, "FinalUserRequest being fetched is: " + finalUserRequest);
-            asyncTask.execute(finalUserRequest);
+                //If there is a network connection, fetch data
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    BookAsyncTask asyncTask = new BookAsyncTask();
+                    Log.v(LOG_TAG, "FinalUserRequest being fetched is: " + finalUserRequest);
+                    asyncTask.execute(finalUserRequest);
 
-        } else {
+                } else {
 
-            //if there is not network hide the progress bar and..
-            adapter.clear();
-            progressBar.setVisibility(View.GONE);
+                    //if there is not network hide the progress bar and..
+                    adapter.clear();
+                    progressBar.setVisibility(View.GONE);
 
-            //Update empty state with no connection error message
-            emptyStateTextView.setText(R.string.no_internet_connection);
-        }
+                    //Update empty state with no connection error message
+                    emptyStateTextView.setText(R.string.no_internet_connection);
+                }
 
             }
         });
