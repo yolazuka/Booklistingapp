@@ -203,13 +203,14 @@ public class QueryUtils {
                     JSONObject item = itemsArray.getJSONObject(i);
                     JSONObject bookAttributes = item.getJSONObject("volumeInfo");
                     JSONObject imageForCover = bookAttributes.getJSONObject("imageLinks");
-                    String urilinkBook = imageForCover.getString("thumbnail");
+                    String urilinkBook = "";
                     Uri imgUri = Uri.parse(urilinkBook);
                     String title = bookAttributes.getString("title");
 
                     String authors = "";
 
                     //If there is author info make this:
+
                     if (bookAttributes.has("authors")) {
 
                         JSONArray author = bookAttributes.getJSONArray("authors");
@@ -239,7 +240,10 @@ public class QueryUtils {
                     //if there is image, parse the image thumbnail
 
                     if (bookAttributes.has("imageLinks")) {
+                        imageForCover = bookAttributes.getJSONObject("imageLinks");
+                        urilinkBook = imageForCover.getString("thumbnail");
                         imgUri = Uri.parse(urilinkBook);
+
                         Log.v(LOG_TAG, "The imagelinks key got info");
 
                         //if there is not image,show this message
